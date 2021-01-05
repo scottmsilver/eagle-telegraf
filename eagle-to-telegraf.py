@@ -4,7 +4,7 @@ import sys
 import getopt
 
 def isPrimitive(thing):
-    return isinstance(thing, (int, str, bool, float))
+  return isinstance(thing, (property, ))
 
 def main():
   try:
@@ -33,13 +33,10 @@ def main():
 
   for meter in eagle.Meter.get_meters(client):
     meter.update()
-
-    for attr, value in meter.__dict__.items():
-        if isPrimitive(value): 
-          print(attr, value)
-
-    print("energy,meter=\"%s\" instantaneous_demand=%f" %
-          (meter.device.hardware_address, meter.instantaneous_demand))
+    print("energy,meter=\"%s\" " % meter.device.hardware_address, end='')
+    for variable in meter.device.get_all_variables()['Main']:
+      print("%s=%s," % (variable.name, variable.value), end='')
+    print()
         
 if __name__ == "__main__":
     main()
