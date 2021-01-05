@@ -11,7 +11,7 @@ def main():
     opts, args = getopt.getopt(sys.argv[1:], "hci", ["energy-monitor-hostname=", "client-id=", "installation-id="])
   except getopt.GetoptError as err:
     # print help information and exit:
-    print(err)  # will print something like "option -a not recognized"
+    print(err)  
     sys.exit(2)
 
   hostname = None
@@ -26,8 +26,10 @@ def main():
     elif option in ("-i", "--installation-id"):
       installationId = attribute
     else:
-        assert False, "unhandled option"
+      assert False, "unhandled option"
 
+  assert hostname and clientId and installationId, "You must sepply all command line options."
+  
   client = eagle.LocalApi(host=hostname,
                         username=clientId, password=installationId)
 
