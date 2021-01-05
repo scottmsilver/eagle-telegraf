@@ -3,9 +3,15 @@ import eagle
 import sys
 import getopt
 
-def isPrimitive(thing):
-  return isinstance(thing, (property, ))
-
+def isnumber(s):
+  try:
+    float(s)
+    return True
+  except ValueError:
+    return False
+  except TypeError:
+    return False
+      
 def main():
   try:
     opts, args = getopt.getopt(sys.argv[1:], "hci", ["energy-monitor-hostname=", "client-id=", "installation-id="])
@@ -36,9 +42,15 @@ def main():
   for meter in eagle.Meter.get_meters(client):
     meter.update()
     print("energy,meter=\"%s\" " % meter.device.hardware_address, end='')
+    measures = []
     for variable in meter.device.get_all_variables()['Main']:
-      print("%s=%s," % (variable.name, variable.value), end='')
-    print()
+      value = variable.value
+      if not isnumber(value):
+        value = "\"%s\"" % value
+      print("%s=%s," % (variable.name, value), end='')
+      measures.append("%s=%s" % (variable.name, value))
+
+    print(",".join(measures))
         
 if __name__ == "__main__":
     main()
