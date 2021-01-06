@@ -2,8 +2,59 @@
 import eagle
 import sys
 import getopt
+from enum import Enum
 
-def isnumber(s):
+class Type(Enum):
+  NUMBER = 1,
+  STRING = 2
+
+fieldTypes = {
+"zigbee:InstantaneousDemand": Type.NUMBER,
+"zigbee:Multiplier": Type.NUMBER,
+"zigbee:Divisor": Type.NUMBER,
+"zigbee:CurrentSummationDelivered": Type.NUMBER,
+"zigbee:CurrentSummationReceived": Type.NUMBER,
+"zigbee:Price": Type.NUMBER,
+"zigbee:PriceTrailingDigits": Type.NUMBER,
+"zigbee:PriceRateLabel": Type.STRING,
+"zigbee:PriceCurrency": Type.STRING,
+"zigbee:PriceTier": Type.NUMBER,
+"zigbee:PriceStartTime": Type.NUMBER,
+"zigbee:PriceDuration": Type.NUMBER,
+"zigbee:Message": Type.STRING,
+"zigbee:MessageId": Type.STRING,
+"zigbee:MessageStartTime": Type.NUMBER,
+"zigbee:MessageDurationInMinutes": Type.NUMBER,
+"zigbee:MessagePriority": Type.NUMBER,
+"zigbee:MessageConfirmationRequired": Type.STRING,
+"zigbee:MessageConfirmed": Type.STRING,
+"zigbee:BlockPeriodType.NUMBEROfBlocks": Type.NUMBER,
+"zigbee:CurrentBlockPeriodConsumptionDelivered": Type.NUMBER,
+"zigbee:NoTierBlock1Price": Type.NUMBER,
+"zigbee:NoTierBlock2Price": Type.NUMBER,
+"zigbee:NoTierBlock3Price": Type.NUMBER,
+"zigbee:NoTierBlock4Price": Type.NUMBER,
+"zigbee:NoTierBlock5Price": Type.NUMBER,
+"zigbee:NoTierBlock6Price": Type.NUMBER,
+"zigbee:NoTierBlock7Price": Type.NUMBER,
+"zigbee:NoTierBlock8Price": Type.NUMBER,
+"zigbee:Block1Threshold": Type.NUMBER,
+"zigbee:Block2Threshold": Type.NUMBER,
+"zigbee:Block3Threshold": Type.NUMBER,
+"zigbee:Block4Threshold": Type.NUMBER,
+"zigbee:Block5Threshold": Type.NUMBER,
+"zigbee:Block6Threshold": Type.NUMBER,
+"zigbee:Block7Threshold": Type.NUMBER,
+"zigbee:Block8Threshold": Type.NUMBER,
+"zigbee:StartOfBlockPeriod": Type.NUMBER,
+"zigbee:BlockPeriodDuration": Type.NUMBER,
+"zigbee:ThresholdMultiplier": Type.NUMBER,
+"zigbee:ThresholdDivisor": Type.NUMBER,
+"zigbee:CurrentBillingPeriodStart": Type.NUMBER,
+"zigbee:CurrentBillingPeriodDuration": Type.NUMBER
+}
+  
+def isNumber(s):
   try:
     float(s)
     return True
@@ -43,15 +94,21 @@ def main():
     meter.update()
     print("energy,meter=\"%s\" " % meter.device.hardware_address, end='')
     measures = []
+    foos = []
     for variable in meter.device.get_all_variables()['Main']:
       value = variable.value
-      if not isnumber(value):
-        value = "\"%s\"" % value
-      print("%s=%s," % (variable.name, value), end='')
-      measures.append("%s=%s" % (variable.name, value))
+      
+      if value != None and variable.name in fieldTypes:
+        fieldType = fieldTypes[variable.name]
+        if fieldType == Type.STRING:
+          value = "\"%s\"" % value
 
+        measures.append("%s=%s" % (variable.name, value))
+    
+    
+    print("%s=%s," % (variable.name, value), end='')
     print(",".join(measures))
-        
+
 if __name__ == "__main__":
     main()
 
