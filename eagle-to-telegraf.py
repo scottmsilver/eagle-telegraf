@@ -98,7 +98,7 @@ def main():
     for variable in meter.device.get_all_variables()['Main']:
       value = variable.value
       
-      if value != None and variable.name in fieldTypes:
+      if value != None and variable.value != 'invalid' and variable.name in fieldTypes:
         fieldType = fieldTypes[variable.name]
         if fieldType == Type.STRING:
           value = "\"%s\"" % value
