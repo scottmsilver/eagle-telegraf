@@ -104,12 +104,9 @@ def main():
           value = str(value) if fieldTypes[variable.name] == Type.STRING else float(value)
 
           metric.add_value(variable.name, value)
-          
+      metric.add_tag("result", "SUCCESS")          
     finally:
-      metric.add_tag("result", "SUCCESS")
       print(metric)
-    
-
 
 if __name__ == "__main__":
     main()
