@@ -14,7 +14,8 @@ pip3 install influx_line_protocol
 
 ```
 ./eagle-to-telegraf.py --energy-monitor-hostname=hostname-of-eagle --client-id=client-id-on-underside-of-device --installation-id=-instalation-id-on-underside-of-device
-
+```
+```
 energy,result=SUCCESS,meter=0x0013500100f56f8a zigbee:InstantaneousDemand=2.951,zigbee:Multiplier=1,zigbee:Divisor=1000,zigbee:CurrentSummationDelivered=79450,zigbee:CurrentSummationReceived=22500.9,zigbee:PriceTrailingDigits=255,zigbee:PriceCurrency="USD\",zigbee:PriceTier=0,zigbee:PriceStartTime=9.46685e+08,zigbee:PriceDuration=0,zigbee:MessageConfirmationRequired="false",zigbee:MessageConfirmed="false",zigbee:CurrentBlockPeriodConsumptionDelivered=0,zigbee:StartOfBlockPeriod=9.46685e+08,zigbee:BlockPeriodDuration=0,zigbee:ThresholdMultiplier=1,zigbee:ThresholdDivisor=1,zigbee:CurrentBillingPeriodStart=1.60987e+09,zigbee:CurrentBillingPeriodDuration=6.05298e+07
 ```
 
