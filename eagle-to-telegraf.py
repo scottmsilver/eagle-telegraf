@@ -1,8 +1,8 @@
-#!/usr/bin/python3
 import eagle
 import sys
 import getopt
 from enum import Enum
+from influx_line_protocol import Metric
 
 class Type(Enum):
   NUMBER = 1,
@@ -92,22 +92,24 @@ def main():
 
   for meter in eagle.Meter.get_meters(client):
     meter.update()
-    print("energy,meter=\"%s\" " % meter.device.hardware_address, end='')
-    measures = []
-    foos = []
-    for variable in meter.device.get_all_variables()['Main']:
-      value = variable.value
-      
-      if value != None and variable.value != 'invalid' and variable.name in fieldTypes:
-        fieldType = fieldTypes[variable.name]
-        if fieldType == Type.STRING:
-          value = "\"%s\"" % value
+    metric = Metric("energy")
+    metric.add_tag("result", "FAIL")
+    metric.add_tag("meter", meter.device.hardware_address)
 
-        measures.append("%s=%s" % (variable.name, value))
+    try:
+      for variable in meter.device.get_all_variables()['Main']:
+        value = variable.value
+        
+        if value != None and value != 'invalid' and variable.name in fieldTypes:
+          value = str(value) if fieldTypes[variable.name] == Type.STRING else float(value)
+
+          metric.add_value(variable.name, value)
+          
+    finally:
+      metric.add_tag("result", "SUCCESS")
+      print(metric)
     
-    
-    print("%s=%s," % (variable.name, value), end='')
-    print(",".join(measures))
+
 
 if __name__ == "__main__":
     main()
